@@ -1,0 +1,19 @@
+{
+  "name": "geiaus",
+  "version": "0.0.1",
+  "description": "signin/signup",
+  "main": "index.js",
+  "scripts": {
+    "test": "mocha test test/**/.*test.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/sunnydaytech/geiaus.git"
+  },
+  "author": "Nicholas",
+  "license": "private",
+  "bugs": {
+    "url": "https://github.com/sunnydaytech/geiaus/issues"
+  },
+  "homepage": "https://github.com/sunnydaytech/geiaus"
+}
