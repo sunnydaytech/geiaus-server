@@ -1,7 +1,8 @@
 "use strict";
 
 var webdriverjs = require("webdriverio");
-var selenium = require('selenium-standalone');
+var selenium = require('selenium-standalone'),
+    util = require('util');
  
 describe('Google Search', function() {
 
@@ -16,7 +17,11 @@ describe('Google Search', function() {
     }, function (err) {
       if (err) return done(err);
       console.log('Selenuim server installed.');
-      selenium.start(function (err, child) {
+      selenium.start({
+        spawnOptions: {
+          stdio: 'inherit'
+        }
+      },function (err, child) {
         if (err) return done(err);
         selenium.child = child;
         const phantomjsPath = process.cwd() + '/node_modules/phantomjs/bin/phantomjs';
@@ -26,8 +31,12 @@ describe('Google Search', function() {
              'phantomjs.binary.path': phantomjsPath 
             }
         });
+        console.log('client ' + util.inspect(client, {depth: 2}));
         console.log('Selenium server started.');
-        client.init().then(function() {done()});
+        client.init().then(function() {
+          console.log('client ' + util.inspect(client, {depth: 2}));
+          done()
+        });
       });
     })}
   );
