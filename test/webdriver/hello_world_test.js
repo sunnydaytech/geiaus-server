@@ -24,7 +24,7 @@ describe('Google Search', function() {
       },function (err, child) {
         if (err) return done(err);
         selenium.child = child;
-        const phantomjsPath = process.cwd() + '/node_modules/phantomjs/bin/phantomjs';
+        const phantomjsPath = process.cwd() + '/node_modules/phantomjs-prebuilt/bin/phantomjs';
         client = webdriverjs.remote({
           desiredCapabilities: { 
               browserName: 'phantomjs',
