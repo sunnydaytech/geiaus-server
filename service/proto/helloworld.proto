@@ -1,0 +1,14 @@
+syntax = "proto3";
+
+package proto;
+
+
+service HelloWorld {
+  rpc print(Request) returns (Response) {}
+}
+message Request {
+}
+message Response {
+  string context = 1;
+}
+
