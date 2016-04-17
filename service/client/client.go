@@ -19,7 +19,7 @@ func main() {
 	defer conn.Close()
 	c := pb.NewHelloWorldClient(conn)
 
-	r, err := c.Print(context.Background(), &pb.Request{})
+	r, er := c.Print(context.Background(), &pb.Request{})
 	if err != nil {
 		log.Fatalf("Could not print: %v", err)
 	}
