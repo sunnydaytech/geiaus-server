@@ -12,7 +12,7 @@ type UserManagerServer struct {
 }
 
 func (s *UserManagerServer) CreateUser(context context.Context, request *pb.CreateUserRequest) (*pb.CreateUserResponse, error) {
-	return nil, nil
+	return &pb.CreateUserResponse{request.UserToCreate}, nil
 }
 
 func (s *UserManagerServer) DeleteUser(context context.Context, request *pb.DeleteUserRequest) (*pb.DeleteUserResponse, error) {
