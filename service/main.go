@@ -1,7 +1,7 @@
 package main
 
 import (
-	"geia.us/service/server"
+	"github.com/sunnydaytech/geiaus/service/server"
 )
 
 func main() {
