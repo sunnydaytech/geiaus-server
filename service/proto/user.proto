@@ -5,6 +5,7 @@ package proto;
 service UserManage {
   rpc createUser(CreateUserRequest) returns (CreateUserResponse) {}
   rpc deleteUser(DeleteUserRequest) returns (DeleteUserResponse) {}
+  rpc lookupUser(LookupUserRequest) returns (LookupUserResponse) {}
 }
 
 message User {
@@ -20,8 +21,18 @@ message CreateUserResponse {
 }
 
 message DeleteUserRequest {
+  int64 user_id = 1;
 }
 
 message DeleteUserResponse {
+  User deleted_user = 1;
+}
+
+message LookupUserRequest {
+  int64 user_id = 1;
+}
+
+message LookupUserResponse {
+  User user = 1;
 }
 
