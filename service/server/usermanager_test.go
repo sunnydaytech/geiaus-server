@@ -1,6 +1,7 @@
 package server
 
 import (
+	"github.com/golang/protobuf/proto"
 	pb "github.com/sunnydaytech/geiaus/service/proto"
 	"github.com/sunnydaytech/geiaus/service/server"
 	"golang.org/x/net/context"
@@ -20,7 +21,7 @@ func TestCreateUser(t *testing.T) {
 	if err != nil {
 		t.Fatalf("CreateUser returns error!")
 	}
-	if *user != *createUserResp.CreatedUser {
+	if !proto.Equal(user, createUserResp.CreatedUser) {
 		t.Errorf("Created user doesn't match.")
 	}
 	lookupUserResp, err := userManagerServer.LookupUser(context, &pb.LookupUserRequest{
@@ -28,7 +29,7 @@ func TestCreateUser(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Lookup user returns error!")
 	}
-	if *user != *lookupUserResp.User {
+	if !proto.Equal(user, lookupUserResp.User) {
 		t.Errorf("Looked up user doesn't match.")
 	}
 

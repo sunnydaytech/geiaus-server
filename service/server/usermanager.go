@@ -16,24 +16,30 @@ type UserManagerServer struct {
 func (s *UserManagerServer) CreateUser(context context.Context, request *pb.CreateUserRequest) (*pb.CreateUserResponse, error) {
 	createdUser := s.userStore.CreateUser(request.UserToCreate)
 	return &pb.CreateUserResponse{
-		CreatedUser: &createdUser}, nil
+		CreatedUser: createdUser}, nil
 }
 
 func (s *UserManagerServer) DeleteUser(context context.Context, request *pb.DeleteUserRequest) (*pb.DeleteUserResponse, error) {
 	deletedUser := s.userStore.DeleteUser(request.UserId)
 	return &pb.DeleteUserResponse{
-		DeletedUser: &deletedUser}, nil
-}
-
-func NewInMemUserServer() *UserManagerServer {
-	return &UserManagerServer{
-		userStore: storage.NewInMemUserStore()}
+		DeletedUser: deletedUser}, nil
 }
 
 func (s *UserManagerServer) LookupUser(context context.Context, request *pb.LookupUserRequest) (*pb.LookupUserResponse, error) {
 	user := s.userStore.LookupUser(request.UserId)
 	return &pb.LookupUserResponse{
-		User: &user}, nil
+		User: user}, nil
+}
+
+func (s *UserManagerServer) SetPassword(context context.Context, request *pb.SetPasswordRequest) (*pb.SetPasswordResponse, error) {
+	user := s.userStore.SetPassword(request.UserId, request.Password, "salt")
+	return &pb.SetPasswordResponse{
+		UpdatedUser: user}, nil
+}
+
+func NewInMemUserServer() *UserManagerServer {
+	return &UserManagerServer{
+		userStore: storage.NewInMemUserStore()}
 }
 
 func Start(port string, userManagerServer *UserManagerServer) {

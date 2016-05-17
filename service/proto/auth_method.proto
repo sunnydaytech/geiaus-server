@@ -1,0 +1,16 @@
+syntax = "proto3";
+
+package proto;
+
+
+message AuthMethod {
+  oneof value {
+    Password password = 1;
+  }
+}
+
+message Password {
+  string hash = 1;
+  string salt = 2;
+}
+
