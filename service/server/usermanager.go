@@ -32,6 +32,7 @@ func (s *UserManagerServer) LookupUser(context context.Context, request *pb.Look
 }
 
 func (s *UserManagerServer) SetPassword(context context.Context, request *pb.SetPasswordRequest) (*pb.SetPasswordResponse, error) {
+	// TODO: implenment hashing function.
 	user := s.userStore.SetPassword(request.UserId, request.Password, "salt")
 	return &pb.SetPasswordResponse{
 		UpdatedUser: user}, nil
