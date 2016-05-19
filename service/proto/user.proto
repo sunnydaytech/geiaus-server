@@ -9,6 +9,7 @@ service UserManage {
   rpc deleteUser(DeleteUserRequest) returns (DeleteUserResponse) {}
   rpc lookupUser(LookupUserRequest) returns (LookupUserResponse) {}
   rpc setPassword(SetPasswordRequest) returns (SetPasswordResponse) {}
+  rpc checkPassword(CheckPasswordRequest) returns (CheckPasswordResponse) {}
 }
 
 message User {
@@ -51,5 +52,14 @@ message SetPasswordRequest {
 
 message SetPasswordResponse {
   User updated_user = 1;
+}
+
+message CheckPasswordRequest {
+  int64 user_id = 1;
+  string password = 2;
+}
+
+message CheckPasswordResponse {
+  bool match = 1;
 }
 

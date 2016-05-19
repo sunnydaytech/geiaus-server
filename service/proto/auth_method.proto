@@ -10,7 +10,7 @@ message AuthMethod {
 }
 
 message Password {
-  string hash = 1;
+  bytes hash = 1;
   string salt = 2;
 }
 

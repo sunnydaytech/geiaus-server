@@ -3,6 +3,7 @@ package server
 import (
 	pb "github.com/sunnydaytech/geiaus/service/proto"
 	"github.com/sunnydaytech/geiaus/service/storage"
+	"golang.org/x/crypto/bcrypt"
 	"golang.org/x/net/context"
 	"google.golang.org/grpc"
 	"log"
@@ -32,10 +33,31 @@ func (s *UserManagerServer) LookupUser(context context.Context, request *pb.Look
 }
 
 func (s *UserManagerServer) SetPassword(context context.Context, request *pb.SetPasswordRequest) (*pb.SetPasswordResponse, error) {
-	// TODO: implenment hashing function.
-	user := s.userStore.SetPassword(request.UserId, request.Password, "salt")
+	// TODO: generate random salt.
+	salt := "salt"
+	passwordBytes := []byte(request.Password + salt)
+	hash, _ := bcrypt.GenerateFromPassword(passwordBytes, bcrypt.DefaultCost)
+	user := s.userStore.SetPassword(request.UserId, hash, salt)
 	return &pb.SetPasswordResponse{
 		UpdatedUser: user}, nil
+}
+
+func (s *UserManagerServer) CheckPassword(context context.Context, request *pb.CheckPasswordRequest) (*pb.CheckPasswordResponse, error) {
+	// TODO: generate random salt.
+	salt := "salt"
+	user := s.userStore.LookupUser(request.UserId)
+	authMethod := user.AuthMethod[0]
+	passwordData := authMethod.GetPassword()
+	passwordBytes := []byte(request.Password + salt)
+	err := bcrypt.CompareHashAndPassword(passwordData.Hash, passwordBytes)
+	if err == nil {
+		return &pb.CheckPasswordResponse{
+			Match: true}, nil
+	} else {
+		return &pb.CheckPasswordResponse{
+			Match: false}, nil
+	}
+
 }
 
 func NewInMemUserServer() *UserManagerServer {
