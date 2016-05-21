@@ -7,7 +7,9 @@ import (
 	"golang.org/x/net/context"
 	"google.golang.org/grpc"
 	"log"
+	"math/rand"
 	"net"
+	"time"
 )
 
 type UserManagerServer struct {
@@ -33,8 +35,7 @@ func (s *UserManagerServer) LookupUser(context context.Context, request *pb.Look
 }
 
 func (s *UserManagerServer) SetPassword(context context.Context, request *pb.SetPasswordRequest) (*pb.SetPasswordResponse, error) {
-	// TODO: generate random salt.
-	salt := "salt"
+	salt := newSalt()
 	passwordBytes := []byte(request.Password + salt)
 	hash, _ := bcrypt.GenerateFromPassword(passwordBytes, bcrypt.DefaultCost)
 	user := s.userStore.SetPassword(request.UserId, hash, salt)
@@ -43,12 +44,10 @@ func (s *UserManagerServer) SetPassword(context context.Context, request *pb.Set
 }
 
 func (s *UserManagerServer) CheckPassword(context context.Context, request *pb.CheckPasswordRequest) (*pb.CheckPasswordResponse, error) {
-	// TODO: generate random salt.
-	salt := "salt"
 	user := s.userStore.LookupUser(request.UserId)
 	authMethod := user.AuthMethod[0]
 	passwordData := authMethod.GetPassword()
-	passwordBytes := []byte(request.Password + salt)
+	passwordBytes := []byte(request.Password + passwordData.Salt)
 	err := bcrypt.CompareHashAndPassword(passwordData.Hash, passwordBytes)
 	if err == nil {
 		return &pb.CheckPasswordResponse{
@@ -58,6 +57,17 @@ func (s *UserManagerServer) CheckPassword(context context.Context, request *pb.C
 			Match: false}, nil
 	}
 
+}
+
+var letterRunes = []rune("!@#$%^&*()_+~1234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ")
+
+func newSalt() string {
+	rand.Seed(time.Now().UnixNano())
+	s := make([]rune, 10)
+	for i := range s {
+		s[i] = letterRunes[rand.Intn(len(letterRunes))]
+	}
+	return string(s)
 }
 
 func NewInMemUserServer() *UserManagerServer {
