@@ -7,4 +7,4 @@ then
   unzip .download/protoc.zip -d .bin
 fi
 
-$protoc -I service/proto/ service/proto/*.proto --go_out=plugins=grpc:service/proto
+$protoc -I proto/ proto/*.proto --go_out=plugins=grpc:proto

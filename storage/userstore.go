@@ -1,7 +1,7 @@
 package storage
 
 import (
-	pb "github.com/sunnydaytech/geiaus/service/proto"
+	pb "github.com/sunnydaytech/geiaus-server/proto"
 )
 
 type UserStore interface {

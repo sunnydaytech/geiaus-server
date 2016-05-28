@@ -1,14 +1,11 @@
 package server
 
 import (
-	pb "github.com/sunnydaytech/geiaus/service/proto"
-	"github.com/sunnydaytech/geiaus/service/storage"
+	pb "github.com/sunnydaytech/geiaus-server/proto"
+	"github.com/sunnydaytech/geiaus-server/storage"
 	"golang.org/x/crypto/bcrypt"
 	"golang.org/x/net/context"
-	"google.golang.org/grpc"
-	"log"
 	"math/rand"
-	"net"
 	"time"
 )
 
@@ -73,15 +70,4 @@ func newSalt() string {
 func NewInMemUserServer() *UserManagerServer {
 	return &UserManagerServer{
 		userStore: storage.NewInMemUserStore()}
-}
-
-func Start(port string, userManagerServer *UserManagerServer) {
-	log.Printf("Starting server on port %s\n", port)
-	lis, err := net.Listen("tcp", port)
-	if err != nil {
-		log.Fatalf("failed to listen: %v", err)
-	}
-	s := grpc.NewServer()
-	pb.RegisterUserManageServer(s, userManagerServer)
-	s.Serve(lis)
 }

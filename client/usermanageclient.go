@@ -1,7 +1,7 @@
 package client
 
 import (
-	pb "github.com/sunnydaytech/geiaus/service/proto"
+	pb "github.com/sunnydaytech/geiaus-server/proto"
 	"golang.org/x/net/context"
 	"google.golang.org/grpc"
 	"log"

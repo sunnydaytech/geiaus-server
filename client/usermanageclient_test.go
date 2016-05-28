@@ -2,7 +2,7 @@ package client
 
 import (
 	"geia.us/service/client"
-	pb "github.com/sunnydaytech/geiaus/service/proto"
+	pb "github.com/sunnydaytech/geiaus-server/proto"
 	"log"
 	"testing"
 )

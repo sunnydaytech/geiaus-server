@@ -2,8 +2,8 @@ package server
 
 import (
 	"github.com/golang/protobuf/proto"
-	pb "github.com/sunnydaytech/geiaus/service/proto"
-	"github.com/sunnydaytech/geiaus/service/server"
+	pb "github.com/sunnydaytech/geiaus-server/proto"
+	"github.com/sunnydaytech/geiaus-server/server"
 	"golang.org/x/net/context"
 	"testing"
 )
