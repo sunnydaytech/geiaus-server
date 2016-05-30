@@ -9,7 +9,7 @@ import (
 )
 
 func main() {
-	Start(":50051", &server.UserManagerServer{})
+	Start(":50051", server.NewInMemUserServer())
 }
 
 func Start(port string, userManagerServer *server.UserManagerServer) {
