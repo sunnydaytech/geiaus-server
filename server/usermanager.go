@@ -14,7 +14,12 @@ type UserManagerServer struct {
 }
 
 func (s *UserManagerServer) CreateUser(context context.Context, request *pb.CreateUserRequest) (*pb.CreateUserResponse, error) {
-	createdUser := s.userStore.CreateUser(request.UserToCreate)
+	createdUser := s.userStore.CreateUser(&pb.User{
+		UserId:      rand.Int63(),
+		UserName:    request.UserName,
+		Email:       request.Email,
+		PhoneNumber: request.PhoneNumber,
+	})
 	return &pb.CreateUserResponse{
 		CreatedUser: createdUser}, nil
 }
@@ -56,10 +61,13 @@ func (s *UserManagerServer) CheckPassword(context context.Context, request *pb.C
 
 }
 
+func init() {
+	rand.Seed(time.Now().UnixNano())
+}
+
 var letterRunes = []rune("!@#$%^&*()_+~1234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ")
 
 func newSalt() string {
-	rand.Seed(time.Now().UnixNano())
 	s := make([]rune, 10)
 	for i := range s {
 		s[i] = letterRunes[rand.Intn(len(letterRunes))]
