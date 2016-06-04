@@ -7,45 +7,57 @@ import (
 type UserStore interface {
 	CreateUser(user *pb.User) *pb.User
 	DeleteUser(userId int64) *pb.User
-	LookupUser(userId int64) *pb.User
+	LookupUserById(userId int64) *pb.User
+	LookupUserByUserName(userName string) *pb.User
 	SetPassword(userId int64, hash []byte, salt string) *pb.User
 }
 
 // InMemUserStore in menmory impl of interface UserStore
 type InMemUserStore struct {
-	userMap map[int64]pb.User
+	userIdMap   map[int64]pb.User
+	usernameMap map[string]pb.User
 }
 
 func (s InMemUserStore) CreateUser(user *pb.User) *pb.User {
-	s.userMap[user.UserId] = *user
+	s.userIdMap[user.UserId] = *user
+	if user.UserName != "" {
+		s.usernameMap[user.UserName] = *user
+	}
 	return user
 }
 
 func (s InMemUserStore) DeleteUser(userId int64) *pb.User {
-	userToBeDeleted := s.userMap[userId]
-	delete(s.userMap, userId)
+	userToBeDeleted := s.userIdMap[userId]
+	delete(s.userIdMap, userId)
 	return &userToBeDeleted
 }
 
-func (s InMemUserStore) LookupUser(userId int64) *pb.User {
-	user := s.userMap[userId]
+func (s InMemUserStore) LookupUserById(userId int64) *pb.User {
+	user := s.userIdMap[userId]
+	return &user
+}
+
+func (s InMemUserStore) LookupUserByUserName(userName string) *pb.User {
+	user := s.usernameMap[userName]
 	return &user
 }
 
 func (s InMemUserStore) SetPassword(userId int64, hash []byte, salt string) *pb.User {
-	user := s.LookupUser(userId)
+	user := s.LookupUserById(userId)
 	user.AuthMethod = append(user.AuthMethod, &pb.AuthMethod{
 		Value: &pb.AuthMethod_Password{
 			Password: &pb.Password{
 				Hash: hash,
 				Salt: salt}}})
-	s.userMap[userId] = *user
+	s.userIdMap[userId] = *user
 	return user
 }
 
 func NewInMemUserStore() UserStore {
-	userMap := map[int64]pb.User{}
+	userIdMap := map[int64]pb.User{}
+	usernameMap := map[string]pb.User{}
 	return InMemUserStore{
-		userMap: userMap,
+		userIdMap:   userIdMap,
+		usernameMap: usernameMap,
 	}
 }

@@ -41,6 +41,9 @@ message DeleteUserResponse {
 
 message LookupUserRequest {
   int64 user_id = 1;
+  string user_name = 2;
+  string email = 3;
+  string phone_number = 4;
 }
 
 message LookupUserResponse {

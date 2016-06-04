@@ -12,9 +12,10 @@ func TestCreateUser(t *testing.T) {
 	userManagerServer := server.NewInMemUserServer()
 
 	context := context.Background()
+	username := "username"
 
 	createUserResp, err := userManagerServer.CreateUser(context, &pb.CreateUserRequest{
-		UserName: "username"})
+		UserName: username})
 	if err != nil {
 		t.Fatalf("CreateUser returns error!")
 	}
@@ -30,6 +31,11 @@ func TestCreateUser(t *testing.T) {
 	}
 	if !proto.Equal(expectedUser, lookupUserResp.User) {
 		t.Errorf("Looked up user doesn't match.")
+	}
+	lookupUserResp, _ = userManagerServer.LookupUser(context, &pb.LookupUserRequest{
+		UserName: username})
+	if lookupUserResp.User.UserId != createdUserId {
+		t.Error("Lookup user by username failed.")
 	}
 
 }

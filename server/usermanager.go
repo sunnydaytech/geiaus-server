@@ -31,7 +31,12 @@ func (s *UserManagerServer) DeleteUser(context context.Context, request *pb.Dele
 }
 
 func (s *UserManagerServer) LookupUser(context context.Context, request *pb.LookupUserRequest) (*pb.LookupUserResponse, error) {
-	user := s.userStore.LookupUser(request.UserId)
+	var user *pb.User
+	if request.UserId != 0 {
+		user = s.userStore.LookupUserById(request.UserId)
+	} else if request.UserName != "" {
+		user = s.userStore.LookupUserByUserName(request.UserName)
+	}
 	return &pb.LookupUserResponse{
 		User: user}, nil
 }
@@ -46,7 +51,7 @@ func (s *UserManagerServer) SetPassword(context context.Context, request *pb.Set
 }
 
 func (s *UserManagerServer) CheckPassword(context context.Context, request *pb.CheckPasswordRequest) (*pb.CheckPasswordResponse, error) {
-	user := s.userStore.LookupUser(request.UserId)
+	user := s.userStore.LookupUserById(request.UserId)
 	authMethod := user.AuthMethod[0]
 	passwordData := authMethod.GetPassword()
 	passwordBytes := []byte(request.Password + passwordData.Salt)
