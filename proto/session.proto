@@ -1,0 +1,42 @@
+syntax = "proto3";
+
+package proto;
+
+service Session {
+  rpc createISession(CreateISessionRequest) returns (CreateISessionResponse) {}
+  rpc createUSession(CreateUSessionRequest) returns (CreateUSessionResponse) {}
+  rpc createBSession(CreateBSessionRequest) returns (CreateBSessionResponse) {}
+}
+
+// intermediate session before the user is authenticated.
+message ISession {
+  string id = 1;
+  int64 user_id = 2;
+}
+
+// user session, used to authenticate the request.
+message USession {
+}
+
+// browser session.
+message BSession {
+}
+
+message CreateISessionRequest {
+}
+
+message CreateISessionResponse {
+  ISession i_session = 1; 
+}
+
+message CreateUSessionRequest {
+}
+
+message CreateUSessionResponse {
+}
+
+message CreateBSessionRequest {
+}
+
+message CreateBSessionResponse {
+}
