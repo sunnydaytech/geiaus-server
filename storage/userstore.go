@@ -2,6 +2,7 @@ package storage
 
 import (
 	pb "github.com/sunnydaytech/geiaus-server/proto"
+	"strconv"
 )
 
 type UserStore interface {
@@ -33,17 +34,26 @@ func (s InMemUserStore) DeleteUser(userId int64) *pb.User {
 }
 
 func (s InMemUserStore) LookupUserById(userId int64) *pb.User {
-	user := s.userIdMap[userId]
+	user, ok := s.userIdMap[userId]
+	if !ok {
+		return nil
+	}
 	return &user
 }
 
 func (s InMemUserStore) LookupUserByUserName(userName string) *pb.User {
-	user := s.usernameMap[userName]
+	user, ok := s.usernameMap[userName]
+	if !ok {
+		return nil
+	}
 	return &user
 }
 
 func (s InMemUserStore) SetPassword(userId int64, hash []byte, salt string) *pb.User {
 	user := s.LookupUserById(userId)
+	if user == nil {
+		panic("User not found: " + strconv.FormatInt(userId, 10))
+	}
 	user.AuthMethod = append(user.AuthMethod, &pb.AuthMethod{
 		Value: &pb.AuthMethod_Password{
 			Password: &pb.Password{

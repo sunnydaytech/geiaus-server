@@ -38,29 +38,37 @@ func TestCreateUser(t *testing.T) {
 		t.Error("Lookup user by username failed.")
 	}
 
+	nonExistUsername := "doens't exist"
+	lookupUserResp, _ = userManagerServer.LookupUser(context, &pb.LookupUserRequest{
+		UserName: nonExistUsername,
+	})
+	if lookupUserResp.User != nil {
+		t.Errorf("lookup user resp should return nil User")
+	}
 }
 
 func TestSetAndCheckPassword(t *testing.T) {
 	userManagerServer := server.NewInMemUserServer()
 
 	context := context.Background()
-	_, err := userManagerServer.CreateUser(context, &pb.CreateUserRequest{
+	createUserResp, err := userManagerServer.CreateUser(context, &pb.CreateUserRequest{
 		UserName: "username"})
 	if err != nil {
 		t.Fatalf("CreateUser returns error!")
 	}
+	userId := createUserResp.CreatedUser.UserId
 	password := "myPassword"
 	userManagerServer.SetPassword(context, &pb.SetPasswordRequest{
-		UserId:   12,
+		UserId:   userId,
 		Password: password})
 	checkPasswordResp, _ := userManagerServer.CheckPassword(context, &pb.CheckPasswordRequest{
-		UserId:   12,
+		UserId:   userId,
 		Password: password})
 	if !checkPasswordResp.Match {
 		t.Fatalf("Check Password fails!")
 	}
 	checkPasswordResp, _ = userManagerServer.CheckPassword(context, &pb.CheckPasswordRequest{
-		UserId:   12,
+		UserId:   userId,
 		Password: password + "wrongPassword"})
 	if checkPasswordResp.Match {
 		t.Fatalf("Check Password should fail!")
