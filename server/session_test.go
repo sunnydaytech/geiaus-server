@@ -1,6 +1,7 @@
 package server
 
 import (
+	"github.com/golang/protobuf/proto"
 	pb "github.com/sunnydaytech/geiaus-server/proto"
 	"github.com/sunnydaytech/geiaus-server/server"
 	"golang.org/x/net/context"
@@ -21,8 +22,15 @@ func TestCreateISession(t *testing.T) {
 	if iSession.UserId != 1 {
 		t.Error("userId doesn't match")
 	}
-	if iSession.Id != "sessionId" {
+	if iSession.Id == "" {
 		t.Error("sessionId missing")
 	}
 
+	lookupISessionRequest := &pb.LookupISessionRequest{
+		Id: iSession.Id,
+	}
+	lookupISessionResp, err := sessionServer.LookupISession(context, lookupISessionRequest)
+	if !proto.Equal(iSession, lookupISessionResp.ISession) {
+		t.Errorf("Looked ISession failed.")
+	}
 }

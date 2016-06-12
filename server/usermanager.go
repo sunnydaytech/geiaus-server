@@ -6,7 +6,14 @@ import (
 	"golang.org/x/crypto/bcrypt"
 	"golang.org/x/net/context"
 	"math/rand"
-	"time"
+)
+
+var (
+	SALT_RUNES = []rune("!@#$%^&*()_+~1234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ")
+)
+
+const (
+	SALT_LENGTH = 10
 )
 
 type UserManagerServer struct {
@@ -66,18 +73,8 @@ func (s *UserManagerServer) CheckPassword(context context.Context, request *pb.C
 
 }
 
-func init() {
-	rand.Seed(time.Now().UnixNano())
-}
-
-var letterRunes = []rune("!@#$%^&*()_+~1234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ")
-
 func newSalt() string {
-	s := make([]rune, 10)
-	for i := range s {
-		s[i] = letterRunes[rand.Intn(len(letterRunes))]
-	}
-	return string(s)
+	return randStr(SALT_RUNES, SALT_LENGTH)
 }
 
 func NewInMemUserServer() *UserManagerServer {

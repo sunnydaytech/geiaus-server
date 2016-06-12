@@ -6,13 +6,29 @@ import (
 	"golang.org/x/net/context"
 )
 
+var (
+	SESSION_RUNES = []rune("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ")
+)
+
+const (
+	SESSION_LENGTH = 20
+)
+
 type SessionServer struct {
 	sessionStore storage.SessionStore
 }
 
 func (s *SessionServer) CreateISession(context context.Context, request *pb.CreateISessionRequest) (*pb.CreateISessionResponse, error) {
-	iSession := s.sessionStore.CreateISession(request.UserId)
+	iSessionId := randStr(SESSION_RUNES, SESSION_LENGTH)
+	iSession := s.sessionStore.CreateISession(request.UserId, iSessionId)
 	return &pb.CreateISessionResponse{
+		ISession: iSession,
+	}, nil
+}
+
+func (s *SessionServer) LookupISession(context context.Context, request *pb.LookupISessionRequest) (*pb.LookupISessionResponse, error) {
+	iSession := s.sessionStore.LookupISessionById(request.Id)
+	return &pb.LookupISessionResponse{
 		ISession: iSession,
 	}, nil
 }

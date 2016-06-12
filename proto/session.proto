@@ -4,6 +4,7 @@ package proto;
 
 service Session {
   rpc createISession(CreateISessionRequest) returns (CreateISessionResponse) {}
+  rpc lookupISession(LookupISessionRequest) returns (LookupISessionResponse) {}
   rpc createUSession(CreateUSessionRequest) returns (CreateUSessionResponse) {}
   rpc createBSession(CreateBSessionRequest) returns (CreateBSessionResponse) {}
 }
@@ -28,6 +29,14 @@ message CreateISessionRequest {
 
 message CreateISessionResponse {
   ISession i_session = 1; 
+}
+
+message LookupISessionRequest {
+  string id = 1;
+}
+
+message LookupISessionResponse {
+  ISession i_session = 1;
 }
 
 message CreateUSessionRequest {

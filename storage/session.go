@@ -5,7 +5,7 @@ import (
 )
 
 type SessionStore interface {
-	CreateISession(userId int64) *pb.ISession
+	CreateISession(userId int64, iSessionId string) *pb.ISession
 	LookupISessionById(iSessionId string) *pb.ISession
 }
 
@@ -13,13 +13,12 @@ type InMemSessionStore struct {
 	iSessionIdMap map[string]pb.ISession
 }
 
-func (s InMemSessionStore) CreateISession(userId int64) *pb.ISession {
-	sessionId := "sessionId"
+func (s InMemSessionStore) CreateISession(userId int64, iSessionId string) *pb.ISession {
 	iSession := &pb.ISession{
-		Id:     sessionId,
+		Id:     iSessionId,
 		UserId: userId,
 	}
-	s.iSessionIdMap[sessionId] = *iSession
+	s.iSessionIdMap[iSessionId] = *iSession
 	return iSession
 }
 
