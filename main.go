@@ -9,7 +9,7 @@ import (
 )
 
 func main() {
-	Start(":50051", server.NewInMemUserServer(), &server.SessionServer{})
+	Start(":50051", server.NewInMemUserServer(), server.NewInMemSessionServer())
 }
 
 func Start(port string, userManagerServer *server.UserManagerServer, sessionServer *server.SessionServer) {
