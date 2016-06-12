@@ -9,10 +9,10 @@ import (
 )
 
 func main() {
-	Start(":50051", server.NewInMemUserServer())
+	Start(":50051", server.NewInMemUserServer(), &server.SessionServer{})
 }
 
-func Start(port string, userManagerServer *server.UserManagerServer) {
+func Start(port string, userManagerServer *server.UserManagerServer, sessionServer *server.SessionServer) {
 	log.Printf("Starting server on port %s\n", port)
 	lis, err := net.Listen("tcp", port)
 	if err != nil {
@@ -20,5 +20,6 @@ func Start(port string, userManagerServer *server.UserManagerServer) {
 	}
 	s := grpc.NewServer()
 	pb.RegisterUserManageServer(s, userManagerServer)
+	pb.RegisterSessionServer(s, sessionServer)
 	s.Serve(lis)
 }

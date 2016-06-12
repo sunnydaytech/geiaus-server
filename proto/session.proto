@@ -23,6 +23,7 @@ message BSession {
 }
 
 message CreateISessionRequest {
+  int64 user_id = 1;
 }
 
 message CreateISessionResponse {
