@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: geiaus-server
+  labels:
+    run: geiaus-server
+spec:
+  ports:
+  - port: 50051 
+    protocol: TCP
+  selector:
+    run: geiaus-server
+  type: ClusterIP
+

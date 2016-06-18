@@ -33,4 +33,12 @@ func TestCreateISession(t *testing.T) {
 	if !proto.Equal(iSession, lookupISessionResp.ISession) {
 		t.Errorf("Looked ISession failed.")
 	}
+
+	lookupISessionRequest = &pb.LookupISessionRequest{
+		Id: "nonExistSessionId",
+	}
+	lookupISessionResp, err = sessionServer.LookupISession(context, lookupISessionRequest)
+	if lookupISessionResp.ISession != nil {
+		t.Errorf("lookupISessionResp.ISession should be nil.")
+	}
 }
