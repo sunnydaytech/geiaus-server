@@ -20,17 +20,18 @@ func (s GCloudUserStore) CreateUser(user *pb.User) *pb.User {
 	key := datastore.NewKey(ctx, KIND_USER, "", user.UserId, nil)
 	_, err := s.client.Put(ctx, key, user)
 	if err != nil {
-		panic("Failed to create user.")
+		panic("Failed to create user." + err.Error())
 	}
 	return user
 }
 
-func (s GCloudUserStore) DeleteUser(user *pb.User) *pb.User {
+func (s GCloudUserStore) DeleteUser(userId int64) *pb.User {
 	ctx := context.Background()
-	key := datastore.NewKey(ctx, KIND_USER, "", user.UserId, nil)
+	key := datastore.NewKey(ctx, KIND_USER, "", userId, nil)
+	user := s.LookupUserById(userId)
 	err := s.client.Delete(ctx, key)
 	if err != nil {
-		panic("Failed to delete user.")
+		panic("Failed to delete user." + err.Error())
 	}
 	return user
 }

@@ -2,6 +2,7 @@ package storage
 
 import (
 	pb "github.com/sunnydaytech/geiaus-server/proto"
+	"google.golang.org/cloud/datastore"
 )
 
 type UserStore interface {
@@ -19,5 +20,11 @@ func NewInMemUserStore() UserStore {
 	return InMemUserStore{
 		userIdMap:   userIdMap,
 		usernameMap: usernameMap,
+	}
+}
+
+func NewGCloudUserStore(client *datastore.Client) UserStore {
+	return GCloudUserStore{
+		client: client,
 	}
 }
