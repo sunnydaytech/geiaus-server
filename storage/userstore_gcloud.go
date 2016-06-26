@@ -4,6 +4,7 @@ import (
 	pb "github.com/sunnydaytech/geiaus-server/proto"
 	"golang.org/x/net/context"
 	"google.golang.org/cloud/datastore"
+	"log"
 	"strconv"
 )
 
@@ -50,10 +51,13 @@ func (s GCloudUserStore) LookupUserById(userId int64) *pb.User {
 func (s GCloudUserStore) LookupUserByUserName(userName string) *pb.User {
 	ctx := context.Background()
 	query := datastore.NewQuery(KIND_USER).Filter("UserName =", userName)
-	users := []*pb.User{}
-	s.client.GetAll(ctx, query, users)
-	if len(users) == 1 {
-		return users[0]
+	users := &[]*pb.User{}
+	_, err := s.client.GetAll(ctx, query, users)
+	if err != nil {
+		log.Printf("Failed to lookup: " + err.Error())
+	}
+	if len(*users) == 1 {
+		return (*users)[0]
 	}
 	return nil
 }
@@ -63,11 +67,8 @@ func (s GCloudUserStore) SetPassword(userId int64, hash []byte, salt string) *pb
 	if user == nil {
 		panic("User not found: " + strconv.FormatInt(userId, 10))
 	}
-	user.AuthMethod = append(user.AuthMethod, &pb.AuthMethod{
-		Value: &pb.AuthMethod_Password{
-			Password: &pb.Password{
-				Hash: hash,
-				Salt: salt}}})
+	user.PasswordHash = hash
+	user.PasswordSalt = salt
 	ctx := context.Background()
 	key := datastore.NewKey(ctx, KIND_USER, "", userId, nil)
 	s.client.Put(ctx, key, user)

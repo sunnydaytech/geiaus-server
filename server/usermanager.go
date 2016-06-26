@@ -5,6 +5,7 @@ import (
 	"github.com/sunnydaytech/geiaus-server/storage"
 	"golang.org/x/crypto/bcrypt"
 	"golang.org/x/net/context"
+	"google.golang.org/cloud/datastore"
 	"math/rand"
 )
 
@@ -14,6 +15,7 @@ var (
 
 const (
 	SALT_LENGTH = 10
+	IN_MEM      = "IN_MEM"
 )
 
 type UserManagerServer struct {
@@ -59,10 +61,8 @@ func (s *UserManagerServer) SetPassword(context context.Context, request *pb.Set
 
 func (s *UserManagerServer) CheckPassword(context context.Context, request *pb.CheckPasswordRequest) (*pb.CheckPasswordResponse, error) {
 	user := s.userStore.LookupUserById(request.UserId)
-	authMethod := user.AuthMethod[0]
-	passwordData := authMethod.GetPassword()
-	passwordBytes := []byte(request.Password + passwordData.Salt)
-	err := bcrypt.CompareHashAndPassword(passwordData.Hash, passwordBytes)
+	passwordBytes := []byte(request.Password + user.PasswordSalt)
+	err := bcrypt.CompareHashAndPassword(user.PasswordHash, passwordBytes)
 	if err == nil {
 		return &pb.CheckPasswordResponse{
 			Match: true}, nil
@@ -77,7 +77,17 @@ func newSalt() string {
 	return randStr(SALT_RUNES, SALT_LENGTH)
 }
 
-func NewInMemUserServer() *UserManagerServer {
+func NewUserServer(datastoreClient *datastore.Client) pb.UserManageServer {
+	if datastoreClient == nil {
+		return NewInMemUserServer()
+	} else {
+		return &UserManagerServer{
+			userStore: storage.NewGCloudUserStore(datastoreClient),
+		}
+	}
+}
+
+func NewInMemUserServer() pb.UserManageServer {
 	return &UserManagerServer{
 		userStore: storage.NewInMemUserStore()}
 }

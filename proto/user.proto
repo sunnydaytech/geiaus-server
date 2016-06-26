@@ -2,8 +2,6 @@ syntax = "proto3";
 
 package proto;
 
-import "auth_method.proto";
-
 service UserManage {
   rpc createUser(CreateUserRequest) returns (CreateUserResponse) {}
   rpc deleteUser(DeleteUserRequest) returns (DeleteUserResponse) {}
@@ -18,7 +16,8 @@ message User {
   string email = 3;
   string phone_number = 4;
 
-  repeated AuthMethod auth_method = 5;
+  bytes password_hash = 5;
+  string password_salt = 6;
 }
 
 message CreateUserRequest {

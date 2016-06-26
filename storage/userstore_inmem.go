@@ -46,11 +46,8 @@ func (s InMemUserStore) SetPassword(userId int64, hash []byte, salt string) *pb.
 	if user == nil {
 		panic("User not found: " + strconv.FormatInt(userId, 10))
 	}
-	user.AuthMethod = append(user.AuthMethod, &pb.AuthMethod{
-		Value: &pb.AuthMethod_Password{
-			Password: &pb.Password{
-				Hash: hash,
-				Salt: salt}}})
+	user.PasswordHash = hash
+	user.PasswordSalt = salt
 	s.userIdMap[userId] = *user
 	return user
 }
