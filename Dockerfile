@@ -16,7 +16,7 @@ RUN go get -u github.com/golang/protobuf/protoc-gen-go
 RUN cd /go/src/github.com/sunnydaytech/geiaus-server && make clean && make install
 
 # Run the outyet command by default when the container starts.
-ENTRYPOINT /go/bin/geiaus-server -gcloud_project_id=nich01as-com
+ENTRYPOINT ["/go/bin/geiaus-server", "-gcloud_project_id", "nich01as-com"]
 
 # Document that the service listens on port 5001.
 EXPOSE 5001 
