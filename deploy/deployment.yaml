@@ -11,7 +11,7 @@ spec:
     spec:
       containers:
       - name: geiaus-server
-        image: gcr.io/nich01as-com/geiaus-server:20160618
+        image: gcr.io/nich01as-com/geiaus-server:20160626
         ports:
         - containerPort: 50051 
         imagePullPolicy: Always
