@@ -6,11 +6,10 @@ import (
 )
 
 type UserStore interface {
-	CreateUser(user *pb.User) *pb.User
+	CreateOrUpdateUser(user *pb.User) *pb.User
 	DeleteUser(userId int64) *pb.User
 	LookupUserById(userId int64) *pb.User
 	LookupUserByUserName(userName string) *pb.User
-	SetPassword(userId int64, hash []byte, salt string) *pb.User
 }
 
 // Returns in-mem impl of UserStore.

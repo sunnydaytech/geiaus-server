@@ -5,7 +5,6 @@ import (
 	"golang.org/x/net/context"
 	"google.golang.org/cloud/datastore"
 	"log"
-	"strconv"
 )
 
 const (
@@ -16,7 +15,7 @@ type GCloudUserStore struct {
 	client *datastore.Client
 }
 
-func (s GCloudUserStore) CreateUser(user *pb.User) *pb.User {
+func (s GCloudUserStore) CreateOrUpdateUser(user *pb.User) *pb.User {
 	ctx := context.Background()
 	key := datastore.NewKey(ctx, KIND_USER, "", user.UserId, nil)
 	_, err := s.client.Put(ctx, key, user)
@@ -60,17 +59,4 @@ func (s GCloudUserStore) LookupUserByUserName(userName string) *pb.User {
 		return (*users)[0]
 	}
 	return nil
-}
-
-func (s GCloudUserStore) SetPassword(userId int64, hash []byte, salt string) *pb.User {
-	user := s.LookupUserById(userId)
-	if user == nil {
-		panic("User not found: " + strconv.FormatInt(userId, 10))
-	}
-	user.PasswordHash = hash
-	user.PasswordSalt = salt
-	ctx := context.Background()
-	key := datastore.NewKey(ctx, KIND_USER, "", userId, nil)
-	s.client.Put(ctx, key, user)
-	return user
 }

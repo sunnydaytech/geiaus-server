@@ -23,7 +23,7 @@ type UserManagerServer struct {
 }
 
 func (s *UserManagerServer) CreateUser(context context.Context, request *pb.CreateUserRequest) (*pb.CreateUserResponse, error) {
-	createdUser := s.userStore.CreateUser(&pb.User{
+	createdUser := s.userStore.CreateOrUpdateUser(&pb.User{
 		UserId:      rand.Int63(),
 		UserName:    request.UserName,
 		Email:       request.Email,
@@ -54,7 +54,10 @@ func (s *UserManagerServer) SetPassword(context context.Context, request *pb.Set
 	salt := newSalt()
 	passwordBytes := []byte(request.Password + salt)
 	hash, _ := bcrypt.GenerateFromPassword(passwordBytes, bcrypt.DefaultCost)
-	user := s.userStore.SetPassword(request.UserId, hash, salt)
+	user := s.userStore.LookupUserById(request.UserId)
+	user.PasswordHash = hash
+	user.PasswordSalt = salt
+	s.userStore.CreateOrUpdateUser(user)
 	return &pb.SetPasswordResponse{
 		UpdatedUser: user}, nil
 }

@@ -2,7 +2,6 @@ package storage
 
 import (
 	pb "github.com/sunnydaytech/geiaus-server/proto"
-	"strconv"
 )
 
 // InMemUserStore in menmory impl of interface UserStore
@@ -11,7 +10,7 @@ type InMemUserStore struct {
 	usernameMap map[string]pb.User
 }
 
-func (s InMemUserStore) CreateUser(user *pb.User) *pb.User {
+func (s InMemUserStore) CreateOrUpdateUser(user *pb.User) *pb.User {
 	s.userIdMap[user.UserId] = *user
 	if user.UserName != "" {
 		s.usernameMap[user.UserName] = *user
@@ -39,15 +38,4 @@ func (s InMemUserStore) LookupUserByUserName(userName string) *pb.User {
 		return nil
 	}
 	return &user
-}
-
-func (s InMemUserStore) SetPassword(userId int64, hash []byte, salt string) *pb.User {
-	user := s.LookupUserById(userId)
-	if user == nil {
-		panic("User not found: " + strconv.FormatInt(userId, 10))
-	}
-	user.PasswordHash = hash
-	user.PasswordSalt = salt
-	s.userIdMap[userId] = *user
-	return user
 }
